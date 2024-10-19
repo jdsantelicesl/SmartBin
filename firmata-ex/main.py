@@ -1,23 +1,71 @@
-import pyfirmata
+import cv2
+from ultralytics import YOLO
+from pyfirmata import Arduino, util
 import time
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-# Define the port where Arduino is connected
-# Example: 'COM3' for Windows or '/dev/ttyUSB0' for Linux/Mac
-port = "COM7"
+# Initialize YOLOv8 model
+model = YOLO('yolov8n.pt')  # Make sure you have yolov8n.pt or replace with your model
 
-# Establish connection with the Arduino board
-board = pyfirmata.Arduino(port)
+# Initialize PyFirmata and specify the port (adjust the port as per your setup)
+board = Arduino(os.getenv("PORT"))  # Replace with your port (e.g., '/dev/ttyACM0', 'COM3' on Windows)
 
-# Start an iterator to read input values continuously
-it = pyfirmata.util.Iterator(board)
+# Start an iterator thread for the board
+it = util.Iterator(board)
 it.start()
 
-# Example: set pin 13 (built-in LED on most Arduino boards) as an output
-led = board.get_pin("d:12:o")  # d: digital, 13: pin number, o: output
+# Define which Arduino pin you want to control
+led_pin = board.get_pin('d:12:o')  # For example, using digital pin 13 (LED)
 
-# Blink LED in an infinite loop
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Error: Webcam not detected.")
+    exit()
+
 while True:
-    led.write(1)  # Turn on LED
-    time.sleep(1)  # Wait 1 second
-    led.write(0)  # Turn off LED
-    time.sleep(1)  # Wait 1 second
+    ret, frame = cap.read()
+
+    if not ret:
+        print("Failed to grab frame")
+        break
+
+    # Perform object detection on the frame using YOLOv8
+    results = model(frame)
+
+    # Annotate the frame with detection results (bounding boxes and labels)
+    annotated_frame = results[0].plot()
+
+    # Check if any 'person' is detected (you can change this to another object class)
+    detected_person = False
+    for result in results[0].boxes:
+        if result.cls == 0:  # Class 0 corresponds to 'person' in COCO dataset
+            detected_person = True
+            break
+
+    # Send a signal to Arduino based on detection
+    if detected_person:
+        print("Person detected - turning LED ON")
+        led_pin.write(1)  # Turn on the LED
+    else:
+        print("No person detected - turning LED OFF")
+        led_pin.write(0)  # Turn off the LED
+
+    # Display the frame with annotations
+    cv2.imshow('YOLOv8 Object Detection', annotated_frame)
+
+    # Press 'q' to break the loop and stop the program
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the webcam and close all OpenCV windows
+cap.release()
+cv2.destroyAllWindows()
+
+# Turn off the LED before closing
+led_pin.write(0)
+
+# Close the connection to the Arduino
+board.exit()
