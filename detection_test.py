@@ -16,7 +16,7 @@ pin_paper = board.get_pin('d:10:o')  # Digital pin 10, output mode (e.g., LED fo
 pin_cap = board.get_pin('d:11:o')  # Digital pin 11, output mode (e.g., LED for 'Plastic Bottle Cap')
 
 # Load your custom YOLO model, replace with Trash Detection Model
-model = YOLO('CUSTOM_MODEL.pt') 
+model = YOLO('inference/trash-detection.pt') 
 
 # Access the webcam
 cap = cv2.VideoCapture(0)
