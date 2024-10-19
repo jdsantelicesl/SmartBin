@@ -1,10 +1,22 @@
-# Basic Computer Vision using YoloV8
-
 import cv2
 from ultralytics import YOLO
+from pyfirmata import Arduino, util
+import time
+import os
+from dotenv import load_dotenv
 
-# Load your custom YOLO model
-model = YOLO('yolov8s.pt')  # Replace with the path to your custom model
+load_dotenv()
+
+# Initialize Arduino and specify the COM port (replace with your port)
+board = Arduino(os.getenv("PORT"))
+
+# Define pins for each action
+pin_can = board.get_pin('d:9:o')  # Digital pin 9, output mode (e.g., LED for 'Can')
+pin_paper = board.get_pin('d:10:o')  # Digital pin 10, output mode (e.g., LED for 'Paper')
+pin_cap = board.get_pin('d:11:o')  # Digital pin 11, output mode (e.g., LED for 'Plastic Bottle Cap')
+
+# Load your custom YOLO model, replace with Trash Detection Model
+model = YOLO('CUSTOM_MODEL.pt') 
 
 # Access the webcam
 cap = cv2.VideoCapture(0)
@@ -23,32 +35,33 @@ while True:
     # Perform object detection on the frame using your custom model
     results = model(frame)
 
-    # Initialize variables for tracking the main person
-    main_person = None
-    highest_confidence = 0
-
-    # Iterate through detected boxes
-    # 1: can
-    # 5: paper
-    # 7: plastic bottle cap
-    print("results: ", results)
+    # Check if results are not empty
     if results:
         for result in results[0].boxes:
-            # Check if the detected object is a person (adjust class index if needed)
-            if result.cls == 0:  
-                confidence = result.conf  # Confidence score
-                if confidence > highest_confidence:
-                    highest_confidence = confidence
-                    main_person = result  # Update the main person if higher confidence is found
+            class_id = int(result.cls)
+            confidence = result.conf  # Confidence score
 
-        # Draw the main person if detected
-        if main_person is not None:
-            x1, y1, x2, y2 = map(int, main_person.xyxy[0])  # Get bounding box coordinates
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)  # Draw rectangle
-            cv2.putText(frame, f'Person: {highest_confidence.item():.2f}', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            # Separate if statements for each class and control the corresponding Arduino pin
+            if class_id == 1:  # Can
+                print(f"Detected CAN with confidence {confidence:.2f}")
+                pin_can.write(1)  # Turn on the pin (e.g., LED on)
+                time.sleep(2)     # Wait for 2 seconds
+                pin_can.write(0)  # Turn off the pin
 
-        # Display the frame
-        cv2.imshow('Custom YOLO Object Detection', frame)
+            if class_id == 5:  # Paper
+                print(f"Detected PAPER with confidence {confidence:.2f}")
+                pin_paper.write(1)  # Turn on the pin (e.g., LED on)
+                time.sleep(2)       # Wait for 2 seconds
+                pin_paper.write(0)  # Turn off the pin
+
+            if class_id == 7:  # Plastic bottle cap
+                print(f"Detected PLASTIC BOTTLE CAP with confidence {confidence:.2f}")
+                pin_cap.write(1)  # Turn on the pin (e.g., LED on)
+                time.sleep(2)     # Wait for 2 seconds
+                pin_cap.write(0)  # Turn off the pin
+
+    # Display the frame (optional, can be removed if no display needed)
+    cv2.imshow('Custom YOLO Object Detection', frame)
 
     # Press 'q' to break the loop and stop the program
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -57,3 +70,6 @@ while True:
 # Release the webcam and close all OpenCV windows
 cap.release()
 cv2.destroyAllWindows()
+
+# Close the connection to the Arduino board
+board.exit()
