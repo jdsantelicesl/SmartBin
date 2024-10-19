@@ -5,6 +5,8 @@ import time
 import os
 from dotenv import load_dotenv
 
+from actuator import set_servo_angle
+
 load_dotenv()
 
 # Initialize Arduino and specify the COM port (replace with your port)
@@ -44,21 +46,42 @@ while True:
             # Separate if statements for each class and control the corresponding Arduino pin
             if class_id == 1:  # Can
                 print(f"Detected CAN with confidence {confidence:.2f}")
-                pin_can.write(1)  # Turn on the pin (e.g., LED on)
-                time.sleep(2)     # Wait for 2 seconds
-                pin_can.write(0)  # Turn off the pin
+                set_servo_angle(1)
+
+            if class_id == 7:
+                print(f"Detected PLASTIC BOTTLE with confidence {confidence:.2f}")
+                set_servo_angle(1)
+
+            if class_id == 8:
+                print(f"Detected PLASTIC BOTTLE CAP with confidence {confidence:.2f}")
+                set_servo_angle(1)
+
+            if class_id == 9:
+                print(f"Detected POP TAB with confidence {confidence:.2f}")
+                set_servo_angle(1)
+
+            if class_id == 3:
+                print(f"Detected DRINK CARTON with confidence {confidence:.2f}")
+                set_servo_angle(1)
+
+            if class_id == 4:
+                print(f"Detected GLASS with confidence {confidence:.2f}")
+                set_servo_angle(1)
 
             if class_id == 5:  # Paper
                 print(f"Detected PAPER with confidence {confidence:.2f}")
-                pin_paper.write(1)  # Turn on the pin (e.g., LED on)
-                time.sleep(2)       # Wait for 2 seconds
-                pin_paper.write(0)  # Turn off the pin
+                set_servo_angle(3)
 
-            if class_id == 7:  # Plastic bottle cap
-                print(f"Detected PLASTIC BOTTLE CAP with confidence {confidence:.2f}")
-                pin_cap.write(1)  # Turn on the pin (e.g., LED on)
-                time.sleep(2)     # Wait for 2 seconds
-                pin_cap.write(0)  # Turn off the pin
+            if class_id == 2:
+                print(f"Detected CARDBOARD with confidence {confidence:.2f}")
+                set_servo_angle(3)
+
+            if class_id == 6:
+                print(f"Detected PLASTIC BAG with confidence {confidence:.2f}")
+                set_servo_angle(2)
+
+            if class_id == 0:
+                print("no set servo pos")
 
     # Display the frame (optional, can be removed if no display needed)
     cv2.imshow('Custom YOLO Object Detection', frame)
