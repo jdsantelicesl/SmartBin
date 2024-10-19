@@ -1,4 +1,3 @@
 myenv/
 venv
 .env
-test.py
