@@ -34,7 +34,7 @@ while True:
             class_id = int(result.cls)
             confidence = result.conf.item()  # Confidence score
 
-            if confidence > 0.8:
+            if confidence > 0.7:
 
                 # Separate if statements for each class and control the corresponding Arduino pin
                 if class_id == 1:  # Can
@@ -53,9 +53,9 @@ while True:
                     print(f"🍾Detected POP TAB with confidence {confidence:.2f}")
                     set_servo_angle(1)
 
-                if class_id == 3:
-                    print(f"🧃Detected DRINK CARTON with confidence {confidence:.2f}")
-                    set_servo_angle(1)
+                # if class_id == 3:
+                #     print(f"🧃Detected DRINK CARTON with confidence {confidence:.2f}")
+                #     set_servo_angle(1)
 
                 if class_id == 4:
                     print(f"🥂Detected GLASS with confidence {confidence:.2f}")
@@ -74,7 +74,7 @@ while True:
                     set_servo_angle(2)
 
             else:
-                print("❌no set servo pos")
+                pass
 
     # Display the frame (optional, can be removed if no display needed)
     cv2.imshow('Custom YOLO Object Detection', frame)
