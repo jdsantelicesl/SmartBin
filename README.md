@@ -22,6 +22,7 @@ P.S. We trained the model at the hotel nearby to get better wifi power.
 
 ### Pitch Deck
 [Figma Pitch Deck Presentation Slides](https://www.figma.com/proto/fPMhEasDlWZEEhfg6660DM/SmartBin?node-id=50-180&node-type=canvas&t=3vaZL3ahZxr8h3Yb-1&scaling=contain&content-scaling=fixed&page-id=0%3A1)
+
 [Figma Design Workflow](https://www.figma.com/design/0ZV7e0JJXtjuXRCYjlXEfv/SmartBin-Template?node-id=0-1&t=e87UqHIZ6ZarGZek-1)
 
 ## Conclusion
