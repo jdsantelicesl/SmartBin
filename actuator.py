@@ -27,5 +27,5 @@ def set_servo_angle(pos):
     if pos == 3:
         servo_pin.write(90)
     time.sleep(2) # can move down to 0.015, set to 0.05 as standard
-    servo_pin.write(60)
+
 
