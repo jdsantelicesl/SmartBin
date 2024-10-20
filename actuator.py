@@ -29,5 +29,3 @@ def set_servo_angle(pos):
     time.sleep(2) # can move down to 0.015, set to 0.05 as standard
 
 
-set_servo_angle(2)
-
