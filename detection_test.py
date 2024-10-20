@@ -34,7 +34,7 @@ while True:
             class_id = int(result.cls)
             confidence = result.conf.item()  # Confidence score
 
-            if confidence > 0.7:
+            if confidence > 0.5:
 
                 # Separate if statements for each class and control the corresponding Arduino pin
                 if class_id == 1:  # Can
