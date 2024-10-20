@@ -1,31 +1,37 @@
-import pyfirmata
+import RPi.GPIO as GPIO
 import time
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# Set up GPIO using BCM numbering
+GPIO.setmode(GPIO.BCM)
 
-# Define the port where Arduino is connected
-# Example: 'COM3' for Windows or '/dev/ttyUSB0' for Linux/Mac
-port = os.getenv('PORT')
-# Establish connection with the Arduino board
-board = pyfirmata.Arduino(port)
-# Start an iterator to read input values continuously
-it = pyfirmata.util.Iterator(board)
-it.start()
+# Set pin 18 as an output pin for the servo
+servo_pin = 18
+GPIO.setup(servo_pin, GPIO.OUT)
 
-servo_pin = board.get_pin("d:9:s")
+# Create a PWM instance on the servo pin at 50Hz
+pwm = GPIO.PWM(servo_pin, 50)
+pwm.start(0)
+
+
+def set_angle(angle):
+    # Calculate duty cycle based on angle
+    duty = angle / 18 + 2  # Convert angle to duty cycle
+    pwm.ChangeDutyCycle(duty)
+    time.sleep(1)  # Wait for the servo to reach the position
 
 
 # Pass integer as pos. Recycle = 1, Landfill = 2, Compost = 3
 def set_servo_angle(pos):
     # Three positions of bins. Angles subject to change depending on orientatio
     if pos == 1:
-        servo_pin.write(30)
+        set_angle(30)
     if pos == 2:
-        servo_pin.write(60)
+        set_angle(60)
     if pos == 3:
-        servo_pin.write(90)
-    time.sleep(2) # can move down to 0.015, set to 0.05 as standard
+        set_angle(90)
+    time.sleep(2)  # can move down to 0.015, set to 0.05 as standard
 
 
+# Stop PWM and clean up
+pwm.stop()
+GPIO.cleanup()

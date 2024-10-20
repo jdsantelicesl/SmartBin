@@ -4,9 +4,22 @@ import time
 import os
 from dotenv import load_dotenv
 
+import RPi.GPIO as GPIO
+import time
 from actuator import set_servo_angle
 
 load_dotenv()
+
+# Set up GPIO using BCM numbering
+GPIO.setmode(GPIO.BCM)
+
+# Set pin 18 as an output pin for the servo
+servo_pin = 18
+GPIO.setup(servo_pin, GPIO.OUT)
+
+# Create a PWM instance on the servo pin at 50Hz
+pwm = GPIO.PWM(servo_pin, 50)
+pwm.start(0)
 
 # Load your custom YOLO model, replace with Trash Detection Model
 model = YOLO('inference/trash-detection.pt') 
@@ -86,3 +99,7 @@ while True:
 # Release the webcam and close all OpenCV windows
 cap.release()
 cv2.destroyAllWindows()
+
+# Stop PWM and clean up
+pwm.stop()
+GPIO.cleanup()
