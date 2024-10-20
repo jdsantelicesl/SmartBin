@@ -1,13 +1,8 @@
-import Map from "./Map";
-import Dashboard from "./Dashboard"
 
-export default function Home() {
+export default function Landing() {
   return (
     <div>
-      <div className="">
-        <Map />
-      </div>
-      <Dashboard />
+      
     </div>
   );
 }

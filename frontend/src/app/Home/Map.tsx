@@ -28,6 +28,7 @@ export default function MapComponent() {
     useState<google.maps.LatLngLiteral | null>(null);
   const [currentPosition, setCurrentPosition] =
     useState<google.maps.LatLngLiteral | null>(null);
+  const [smartBins, setSmartBins] = useState<google.maps.LatLngLiteral[]>([]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -126,10 +127,51 @@ export default function MapComponent() {
     }
   }, []);
 
+  // Mock data for SmartBins nearby
+  const mockSmartBins = [
+    { lat: 37.7845, lng: -122.4095 },
+    { lat: 37.7852, lng: -122.4087 },
+    { lat: 37.7838, lng: -122.4103 },
+    { lat: 37.7861, lng: -122.4098 },
+    { lat: 37.7833, lng: -122.4089 },
+    { lat: 37.7857, lng: -122.4112 },
+    { lat: 37.7841, lng: -122.4076 },
+    { lat: 37.7869, lng: -122.4091 },
+    { lat: 37.7829, lng: -122.4108 },
+    { lat: 37.7848, lng: -122.4121 },
+  ];
+
+  useEffect(() => {
+    // Use mock data for testing
+    setSmartBins(mockSmartBins);
+
+    // Commented out fetch request for future use
+    /*
+    const fetchSmartBins = async () => {
+      try {
+        const response = await fetch('/api/smartbins');
+        const data = await response.json();
+        setSmartBins(data);
+      } catch (error) {
+        console.error("Error fetching SmartBin locations:", error);
+      }
+    };
+
+    fetchSmartBins();
+    */
+  }, []);
+
   if (!isLoaded) return <div>Loading...</div>;
 
   const currentPositionIcon = {
     url: "/assets/Navigation.png",
+    scaledSize: new google.maps.Size(32, 32),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(16, 16),
+  };
+
+  const smartBinIcon = {
+    url: "/assets/SmartBin.png",
     scaledSize: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0, 0),
     anchor: new google.maps.Point(16, 16),
@@ -197,6 +239,14 @@ export default function MapComponent() {
           {searchLocation && searchLocation !== currentPosition && (
             <Marker position={searchLocation} />
           )}
+          {smartBins.map((bin, index) => (
+            <Marker
+              key={index}
+              position={bin}
+              icon={smartBinIcon}
+              title="SmartBin"
+            />
+          ))}
         </GoogleMap>
       </div>
     </div>
