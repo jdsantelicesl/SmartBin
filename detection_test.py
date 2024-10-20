@@ -34,7 +34,7 @@ while True:
             class_id = int(result.cls)
             confidence = result.conf.item()  # Confidence score
 
-            if confidence > 0.7:
+            if confidence > 0.1:
 
                 # Separate if statements for each class and control the corresponding Arduino pin
                 if class_id == 1:  # Can
@@ -59,7 +59,7 @@ while True:
 
                 if class_id == 4:
                     print(f"🥂Detected GLASS with confidence {confidence:.2f}")
-                    set_servo_angle(1)
+                    set_servo_angle(2)
 
                 if class_id == 5:  # Paper
                     print(f"📜Detected PAPER with confidence {confidence:.2f}")
@@ -77,7 +77,7 @@ while True:
                 pass
 
     # Display the frame (optional, can be removed if no display needed)
-    cv2.imshow('Custom YOLO Object Detection', frame)
+    #cv2.imshow('Custom YOLO Object Detection', frame)
 
     # Press 'q' to break the loop and stop the program
     if cv2.waitKey(1) & 0xFF == ord('q'):

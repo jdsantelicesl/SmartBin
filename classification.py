@@ -6,6 +6,7 @@ model = YOLO('inference/garbage_classification.pt')
 
 # Open the webcam
 cap = cv2.VideoCapture(0)
+frame_count = 0
 
 while True:
     # Read a frame from the webcam
@@ -14,7 +15,10 @@ while True:
         break
 
     # Perform classification
-    results = model(frame)
+    frame_count += 1
+    
+    if frame_count % 30:
+        results = model(frame)
 
     # Get the top predicted class and its confidence
     top_prediction = results[0].probs.top1
