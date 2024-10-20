@@ -21,7 +21,7 @@ We grabbed datasets from Roboflow and uploaded them onto Ultralytics Hub to trai
 P.S. We trained the model at the hotel nearby to get better wifi power.
 
 ### Pitch Deck
-[![figma]](https://www.figma.com/design/fPMhEasDlWZEEhfg6660DM/SmartBin?node-id=0-1&t=FhZhI6z9YB8ibAEq-1)
+![figma](https://www.figma.com/design/fPMhEasDlWZEEhfg6660DM/SmartBin?node-id=0-1&t=FhZhI6z9YB8ibAEq-1)
 
 ## Conclusion
 With SmartBin, we’re offering a practical and sustainable solution to a widespread issue, making waste management at large events simpler, more efficient, and compliant with regulations. Join us in working toward a cleaner tomorrow.
